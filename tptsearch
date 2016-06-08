@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""tptsearch
+
+taskpaper-tools search
+
+A Python module/command line tool to seach items in a .taskpaper file.
+"""
+from taskpaper.taskpaper import TaskPaper
+
+def _projectmatch(item, projects):
+    return True
+
+def _textmatch(item, text):
+    return True
+
+def _tagmatch(item, text):
+    return True
+
+def tptsearch(tp, text=None, tags=None, projects=None):
+    matches = []
+
+    for item in tp:
+        if item.is_task():
+            if _projectmatch(item, projects) and \
+               _textmatch(item, text) and \
+               _tagmatch(item, tags):
+               matches.append(item)
+
+    return matches
+
+
+if __name__ == '__main__':
+    import argparse
+    import sys
+
+    formatter_class = argparse.ArgumentDefaultsHelpFormatter
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=formatter_class)
+    parser.add_argument('-t', '--text', help="Search text",
+                        default=None, type=str)
+    parser.add_argument('-g', '--tag', help="Search tag",
+                        default=None, type=str)
+    parser.add_argument('-p', '--project', help="Search project",
+                        default=None, type=str)
+    parser.add_argument('infile', help="Input file",
+                        type=argparse.FileType('r'))
+    args = parser.parse_args(sys.argv[1:])
+
+    tp = TaskPaper.parse(args.infile)
+
+    textlist = None
+    if args.text:
+        textlist = [args.text]
+
+    taglist = None
+    if args.tag:
+        taglist = [args.tag]
+
+    projectlist = None
+    if args.project:
+        projectlist = [args.project]
+
+    matches = tptsearch(tp, text=textlist, tags=taglist, projects=projectlist)
+
+    for match in matches:
+        print(match)
