@@ -1,0 +1,8 @@
+Project A:
+	- task 1
+	- task 2 @today
+Project B:
+	- task 3
+	- task 4 @recur(1d)
+Archive:
+	- task 5 @done @project(Project B)
